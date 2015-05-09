@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>network_zeroconf</name>
-  <version>0.1.28</version>
+  <version>0.1.29</version>
   <description>The zeroconf package</description>
   <maintainer email="erwan.lehuitouze@gmail.com">Erwan Le Huitouze</maintainer>
   <license>GPLv3</license>
