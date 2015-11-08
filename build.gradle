@@ -42,7 +42,7 @@ targetCompatibility = 1.7
 
 defaultTasks 'install'
 
-group = 'com.alfred.ros'
+group = 'org.rosbuilding'
 
 allprojects {
     version = project.catkin.pkg.version

@@ -7,5 +7,5 @@ catkin_rosjava_setup(publishMavenJavaPublicationToMavenRepository)
 
 catkin_package()
 
-install(DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_MAVEN_DESTINATION}/com/alfred/ros/${PROJECT_NAME}/ 
-        DESTINATION ${CATKIN_GLOBAL_MAVEN_DESTINATION}/com/alfred/ros/${PROJECT_NAME})
+install(DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_MAVEN_DESTINATION}/org/rosbuilding/${PROJECT_NAME}/
+        DESTINATION ${CATKIN_GLOBAL_MAVEN_DESTINATION}/org/rosbuilding/${PROJECT_NAME})

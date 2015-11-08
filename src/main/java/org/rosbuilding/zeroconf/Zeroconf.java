@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.alfred.ros.zeroconf;
+package org.rosbuilding.zeroconf;
 
 import java.io.IOException;
 import java.lang.Boolean;
@@ -45,17 +45,17 @@ import com.github.rosjava.zeroconf_jmdns_suite.jmdns.ZeroconfLogger;
 
 
 /**
- * This is a wrapper around the jmmdns (multi-homed) part of the jmdns library. 
- * 
+ * This is a wrapper around the jmmdns (multi-homed) part of the jmdns library.
+ *
  * On the surface it does not look as if we need this wrapper since jmdns has quite
- * a nice api, but it turned out to be quite awkward to use. There are some broken api, 
+ * a nice api, but it turned out to be quite awkward to use. There are some broken api,
  * others that need some black magic, and also the ouput (in ServiceInfo types) is fixed -
  * you can't modify, or merge them to simplify the output list of discovered services.
- * 
+ *
  * Currently working with the jmdns guy and merging convenient additions here upstream but
  * its a gradual process that needs alot of testing.
- * 
- * In summary, this is a nice, simple api for publishing services and doing service 
+ *
+ * In summary, this is a nice, simple api for publishing services and doing service
  * discovery (either via polling or via callback).
  */
 public class Zeroconf implements ServiceListener, ServiceTypeListener, NetworkTopologyListener {
@@ -63,7 +63,7 @@ public class Zeroconf implements ServiceListener, ServiceTypeListener, NetworkTo
     private class DefaultLogger implements ZeroconfLogger {
         public void println(String msg) {}
     }
-    
+
     JmmDNS jmmdns;
     Set<String> listeners;
     Set<ServiceInfo> services;
@@ -126,13 +126,13 @@ public class Zeroconf implements ServiceListener, ServiceTypeListener, NetworkTo
         String service = service_type + "." + domain + ".";
         logger.println("Activating listener: " + service);
         listeners.add(service);
-        if ( listener_callback != null ) { 
+        if ( listener_callback != null ) {
             listener_callbacks.put(service, listener_callback);
         }
         // add to currently established interfaces
         jmmdns.addServiceListener(service, this);
     }
-    
+
     /**
      * Removes a single listener - though we're not likely to use this much.
      */
@@ -140,7 +140,7 @@ public class Zeroconf implements ServiceListener, ServiceTypeListener, NetworkTo
         String listener_to_remove = service_type + "." + domain + ".";
         for ( Iterator<String> listener = listeners.iterator(); listener.hasNext(); ) {
             String this_listener = listener.next().toString();
-            if ( this_listener.equals(listener_to_remove) ) { 
+            if ( this_listener.equals(listener_to_remove) ) {
                 logger.println("Deactivating listener: " + this_listener);
                 listener.remove();
                 // remove from currently established interfaces
@@ -152,15 +152,15 @@ public class Zeroconf implements ServiceListener, ServiceTypeListener, NetworkTo
     }
     /**
      * Publish a zeroconf service.
-     * 
+     *
      * Should actually provide a return value here, so the user can see the
      * actually published name.
-     * 
+     *
      * @param name : english readable name for the service
      * @param type : zeroconf service type, e.g. _ros-master._tcp
      * @param domain : domain to advertise on (usually 'local')
      * @param port : port number
-     * @param description : 
+     * @param description :
      */
     public void addService(String name, String type, String domain, int port, String description) {
         String full_service_type = type + "." + domain + ".";
@@ -177,12 +177,12 @@ public class Zeroconf implements ServiceListener, ServiceTypeListener, NetworkTo
                 e.printStackTrace();
             }
         }
-        
+
         // this is broken - it adds it, but fails to resolve it on other systems
         // https://sourceforge.net/tracker/?func=detail&aid=3435220&group_id=93852&atid=605791
         // services.add(ServiceInfo.create(service_type, service_name, service_port, 0, 0, true, text));
     }
-    
+
     public void addService(String name, String type, String domain, int port, HashMap<String, byte[]> properties) {
         String full_service_type = type + "." + domain + ".";
         logger.println("Registering service: " + full_service_type);
@@ -195,12 +195,12 @@ public class Zeroconf implements ServiceListener, ServiceTypeListener, NetworkTo
                 e.printStackTrace();
             }
         }
-        
+
         // this is broken - it adds it, but fails to resolve it on other systems
         // https://sourceforge.net/tracker/?func=detail&aid=3435220&group_id=93852&atid=605791
         // services.add(ServiceInfo.create(service_type, service_name, service_port, 0, 0, true, text));
     }
-    
+
     public void addService(DiscoveredService service) {
         String full_service_type = service.type + "." + service.domain + ".";
         logger.println("Registering service: " + full_service_type);
@@ -213,7 +213,7 @@ public class Zeroconf implements ServiceListener, ServiceTypeListener, NetworkTo
                 e.printStackTrace();
             }
         }
-        
+
         // this is broken - it adds it, but fails to resolve it on other systems
         // https://sourceforge.net/tracker/?func=detail&aid=3435220&group_id=93852&atid=605791
         // services.add(ServiceInfo.create(service_type, service_name, service_port, 0, 0, true, text));
@@ -222,7 +222,7 @@ public class Zeroconf implements ServiceListener, ServiceTypeListener, NetworkTo
     /**
      * If you try calling this immediately after a service added callback
      * occurred, you probably wont see anything - it needs some time to resolve.
-     * 
+     *
      * It will block if it needs to resolve services (and aren't in its cache yet).
      */
     public List<DiscoveredService> listDiscoveredServices() {
@@ -271,27 +271,27 @@ public class Zeroconf implements ServiceListener, ServiceTypeListener, NetworkTo
             if ( !service_found ) {
                 discovered_services.add(toDiscoveredService(service_info));
             }
-            
+
         }
         return discovered_services;
     }
 
     /**
      * This should be called when your application shuts down to remove all services
-     * so you don't pollute the zeroconf namespace with hanging, unresolvable services. 
+     * so you don't pollute the zeroconf namespace with hanging, unresolvable services.
      */
     public void removeAllServices() {
         logger.println("Removing all services");
         jmmdns.unregisterAllServices();
         services.clear();
     }
-    
+
     public void shutdown() throws IOException {
         removeAllServices();
         logger.println("Shutdown");
         jmmdns.close();
     }
-    
+
     /*************************************************************************
      * Listener Callbacks - from ServiceListener and ServiceTypeListener
      ************************************************************************/
@@ -356,7 +356,7 @@ public class Zeroconf implements ServiceListener, ServiceTypeListener, NetworkTo
     }
 
     /******************************
-     * Network Topology Callbacks 
+     * Network Topology Callbacks
      *****************************/
     @Override
     public void inetAddressAdded(NetworkTopologyEvent event) {
@@ -382,7 +382,7 @@ public class Zeroconf implements ServiceListener, ServiceTypeListener, NetworkTo
             e.printStackTrace();
         }
     }
-    
+
     @Override
     public void inetAddressRemoved(NetworkTopologyEvent event) {
         String event_address_str = event.getInetAddress().getHostAddress();
@@ -410,7 +410,7 @@ public class Zeroconf implements ServiceListener, ServiceTypeListener, NetworkTo
     }
 
     /******************************
-     * Utility Functions 
+     * Utility Functions
      *****************************/
     public void display(DiscoveredService discovered_service) {
         logger.println("Discovered Service:");
@@ -440,19 +440,19 @@ public class Zeroconf implements ServiceListener, ServiceTypeListener, NetworkTo
     }
 
     /*************************************************************************
-     * Private 
+     * Private
      ************************************************************************/
 //    /******************************
-//   * Discovery 
+//   * Discovery
 //   *****************************/
 //    /**
 //     * If you try calling this immediately after a service added callback
 //     * occurred, you probably wont see anything - it needs some time to resolve.
-//     * 
+//     *
 //     * It will block if it needs to resolve services (and aren't in its cache yet).
-//     * 
+//     *
 //     * @sa listDiscoveredServices
-//     * 
+//     *
 //     * @return service_infos : an array of discovered ServiceInfo objects.
 //     */
 //    private List<ServiceInfo> listJmdnsDiscoveredServices() {
@@ -464,7 +464,7 @@ public class Zeroconf implements ServiceListener, ServiceTypeListener, NetworkTo
 //    }
 
     /******************************
-     * Utility Functions 
+     * Utility Functions
      *****************************/
     private DiscoveredService toDiscoveredService(ServiceInfo service_info) {
         DiscoveredService discovered_service = new DiscoveredService();
@@ -485,19 +485,19 @@ public class Zeroconf implements ServiceListener, ServiceTypeListener, NetworkTo
         Enumeration<String> propertyNames = service_info.getPropertyNames();
         if (propertyNames != null) {
             ArrayList<String> properties = Collections.list(propertyNames);
-            
+
             for (String name : properties) {
                 String property = service_info.getPropertyString(name);
 //                if (property == null) {
 //                    property = service_info.getPropertyBytes(name);
 //                }
-                
+
                 if (property != null) {
                     discovered_service.properties.put(name, property);
                 }
             }
         }
-        
+
         return discovered_service;
     }
 
