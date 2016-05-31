@@ -2,8 +2,8 @@
 Changelog for package smarthome_network_zeroconf
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.66 (2016-05-31)
+-------------------
 * Rename package to smarthome_network_zeroconf
 * Contributors: Erwan Le Huitouze, Mickael Gaillard
 
